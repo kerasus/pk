@@ -115,6 +115,12 @@ export default {
       rightDrawer: false,
       title: 'Vuetify.js'
     }
+  },
+  created() {
+    let token = this.$store.getters['Auth/accessToken']
+    if (token) {
+      this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    }
   }
 }
 </script>

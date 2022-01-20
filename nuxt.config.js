@@ -40,11 +40,28 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
+    'nuxt-vuex-localstorage'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/axios'
   ],
+
+  axios: {
+    credentials: true, // https://axios.nuxtjs.org/options/#credentials
+    proxyHeaders: true, // https://axios.nuxtjs.org/options/#proxyheaders
+    proxy: true // Can be also an object with default options
+  },
+
+  proxy: {
+    [process.env.AUTH_INTERNAL_API_SERVER]: { target: process.env.AUTH_TARGET_API_SERVER, pathRewrite: {['^'+process.env.AUTH_INTERNAL_API_SERVER]: ''} },
+    [process.env.LUMEN_INTERNAL_API_SERVER]: { target: process.env.LUMEN_TARGET_API_SERVER, pathRewrite: {['^'+process.env.LUMEN_INTERNAL_API_SERVER]: ''} }
+  },
+
+  router: {
+    middleware: ['auth']
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -68,5 +85,18 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+  },
+
+  server: {
+    // port: 8000, // default: 3000
+    host: '0.0.0.0', // default: localhost,
+    timing: false
+  },
+
+  env: {
+    AUTH_TARGET_API_SERVER: process.env.AUTH_TARGET_API_SERVER || 'https://office.alaatv.com:702/api/v2',
+    LUMEN_TARGET_API_SERVER: process.env.LUMEN_TARGET_API_SERVER || 'https://office.alaatv.com:500/api/v1',
+    AUTH_INTERNAL_API_SERVER: process.env.AUTH_INTERNAL_API_SERVER || '/alaa/api/v2',
+    LUMEN_INTERNAL_API_SERVER: process.env.LUMEN_INTERNAL_API_SERVER || '/3a/api/v1'
   }
 }
