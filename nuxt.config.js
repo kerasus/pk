@@ -59,10 +59,6 @@ export default {
     [process.env.LUMEN_INTERNAL_API_SERVER]: { target: process.env.LUMEN_TARGET_API_SERVER, pathRewrite: {['^'+process.env.LUMEN_INTERNAL_API_SERVER]: ''} }
   },
 
-  router: {
-    middleware: ['auth']
-  },
-
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
