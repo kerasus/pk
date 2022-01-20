@@ -7,7 +7,7 @@
           {{ savedNumber }} از {{ completeUserNumber }}
         </v-col>
         <v-col md="2">
-          <v-btn color="green" dark>
+          <v-btn color="green" dark :disabled="savedNumber === completeUserNumber">
             ذخیره
             <v-icon :style="{ marginRight: '10px' }">
               mdi-content-save
@@ -43,7 +43,7 @@
           </div>
         </v-col>
         <v-col md="1">
-          <v-btn v-if="user.hasBeenSaved" icon color="green">
+          <v-btn v-if="user.hasBeenSaved" icon color="green" @click="user.hasBeenSaved = false">
             <v-icon>
               mdi-pencil
             </v-icon>
@@ -55,11 +55,17 @@
 </template>
 
 <script>
+import API_ADDRESS from "assets/Addresses";
+
 export default {
   name: "userCreate",
   data () {
     return {
-      userForm: []
+      userForm: [],
+      genders: [],
+      majors: [],
+      provinces: [],
+      cities: []
     }
   },
   methods: {
@@ -85,6 +91,15 @@ export default {
       return !!(user.firstName && user.lastName && user.gender
         && user.major && user.mobile && user.nationalCode &&
         user.province && user.city);
+    },
+    getUserFormData () {
+      this.$axios.get(API_ADDRESS.user.formData)
+        .then((resp) => {
+          this.genders = resp.data.data.genders
+          this.majors = resp.data.data.majors
+          this.provinces = resp.data.data.provinces
+          this.cities = resp.data.data.cities
+        })
     }
   },
   computed: {
