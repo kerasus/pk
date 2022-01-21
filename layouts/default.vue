@@ -118,6 +118,7 @@ export default {
   },
   created() {
     let token = this.$store.getters['Auth/accessToken']
+    console.log('token', token)
     if (token) {
       this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     }

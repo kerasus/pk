@@ -165,7 +165,8 @@
               that.user = new User(response.data.data.user)
               that.$store.commit('Auth/updateUser', that.user)
               const access_token = response.data.data.access_token
-
+              that.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token
+              console.log(access_token)
               this.setAccessToken(access_token)
               that.setUserData(response.data.data.user)
               this.getUserData(() => { this.redirectTo() })
