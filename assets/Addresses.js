@@ -9,6 +9,9 @@ const API_ADDRESS = {
   auth: {
     login: authServer + '/login'
   },
+  product: {
+    base: authServer + '/admin/bonyadEhsan/order'
+  },
   user: {
     create: authServer + '/admin/bonyadEhsan/user',
     base: authServer + '/user',
