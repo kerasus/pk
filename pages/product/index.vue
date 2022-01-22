@@ -1,11 +1,15 @@
 <template>
   <v-container fluid>
+    <v-overlay v-if="!loaded">
+      <v-progress-circular indeterminate />
+    </v-overlay>
     <v-row>
       <v-col>
         <v-data-table
-          v-if="!loading"
+          v-if="loaded"
           :headers="headers"
           :items="response.data"
+          :loading="loading"
           :items-per-page="response.meta.per_page"
           class="elevation-1"
           :page.sync="page"
@@ -39,7 +43,7 @@
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="text-h5">test</span>
+                    <span class="text-h5">اطلاعات کاربر</span>
                   </v-card-title>
 
                   <v-card-text>
@@ -51,8 +55,8 @@
                           md="4"
                         >
                           <v-text-field
-                            v-model="editedItem.name"
-                            label="Dessert name"
+                            v-model="editedItem.first_name"
+                            label="نام"
                           ></v-text-field>
                         </v-col>
                         <v-col
@@ -71,8 +75,8 @@
                           md="4"
                         >
                           <v-text-field
-                            v-model="editedItem.fat"
-                            label="Fat (g)"
+                            v-model="editedItem.user_mobile"
+                            label="موبایل کاربر"
                           ></v-text-field>
                         </v-col>
                         <v-col
@@ -132,22 +136,22 @@
             </v-toolbar>
           </template>
           <template v-slot:item.orderProducts="{ item }">
-            <p v-for="(orderProduct, index) in item.orderProducts" :key="index">{{orderProduct.product.title}}</p>
+            <p :style="{ margin: '10px 5px' }" v-for="(orderProduct, index) in item.orderProducts" :key="index">{{orderProduct.product.title}}</p>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon
-              small
-              class="mr-2"
-              @click="editItem(item)"
-            >
-              mdi-pencil
-            </v-icon>
-            <v-icon
-              small
-              @click="deleteItem(item)"
-            >
-              mdi-delete
-            </v-icon>
+            <v-btn icon @click="editItem(item)" color="primary">
+              <v-icon
+              >
+                mdi-pencil
+              </v-icon>
+            </v-btn>
+            <v-btn icon color="red">
+              <v-icon
+                @click="deleteItem(item)"
+              >
+                mdi-delete
+              </v-icon>
+            </v-btn>
           </template>
           <template v-slot:no-data>
             <v-btn
@@ -161,7 +165,7 @@
         <div class="text-center pt-2" v-if="!loading">
           <v-pagination
             v-model="page"
-            :length="response.meta.count"
+            :length="response.meta.last_page"
           ></v-pagination>
         </div>
       </v-col>
@@ -171,26 +175,17 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
+import goTo from 'vuetify/lib/services/goto'
 
 export default {
   name: "productShowEdit.vue",
   created () {
-    this.loading = true
-    this.$axios.get(API_ADDRESS.product.base, {
-      headers: {
-        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiMmM1ZWQzOWUwNDUzMzZhOGY3ZjRiNWU2OTU0MDJkMmQzNmRlNmYyYjE3OTNlNzFmZjkyYjkzZjEyYWNhOWQwNTAzOTUyOWM5NDY5ZDYxY2QiLCJpYXQiOjE2NDI4Mzc0MjMuMTQ3OTcsIm5iZiI6MTY0MjgzNzQyMy4xNDc5NzIsImV4cCI6MTY3NDM3MzQyMy4xNDIxMzgsInN1YiI6IjM4OTI3MCIsInNjb3BlcyI6W119.RyajIaYQPEaNpmUHM_Zx7wSAexMp9PTmKa08n7dDe0fAlNyEVKyE9bkJP4WW7NlNEnV5bRLS192Kwj19TXrklcmVYW32BQBnxfFI3pIK3UxWUoA5XzGRlNlFp_gSAkrEkJgDHE45c_9Vp2DNUPwxH9kr4D_GgI_2YI5sdDGoCS81hJa9cU0TUOJFrImtkypmtsH_EAzwLedNngPsn41HuMWc_sOj-5I74_LLT29fNXQstEBuvlXXEKF2TvVQ1kdzD_JIeK6LjQlcYYLcEI3IIM79nXj91FQ3zcusV1I2fTLlP4J-988WTfUJwJSIZijsN1rcW1ZEQ14ezImPXcphPxhNCz1rz_g-f4VuKzqMLHUQrbMv3RM4dvTE9LIhh-X-KvvinYJQnisXQQOdfzB_Z4e3f1d1YWxpiZZfmMjrLkr5-5PBSFRngbMVT11e1h6hbC2iIgoxIoLMucXef4x4vkxI3YuIKWjnuEOXtvpE6MY91f3Vsi2TpRUmD4OBG4wj4N2f_e3jWvzg-dAb1b3Yww586iS1zlSOk_OIgA0F8Fa7NI4nKOEYoaMZS2V_5RhaTf8mDwW0OdeVNRN4OkO3Bp2Mg6oPXq9wbssmR64HBf4R-uU5ZYic7sbepBjXLaDAD2gNrU0WKB5nEv9TzsM7rAdPZDcK_a8NJxeYcDqvb9s'
-      }
-    }).then(resp => {
-      this.response = resp.data
-      this.response.data.forEach((item, index) => {
-        this.response.data[index] = { orderProducts: item.orderproducts, user: item.user.first_name + ' ' + item.user.last_name, user_mobile: item.user.mobile, insertor: item.insertor.first_name + ' ' + item.insertor.last_name, insertor_mobile: item.insertor.mobile, completed_at: item.completed_at }
-      })
-      this.page = resp.data.meta.current_page
-      this.loading = false
-    })
+    this.apiCall()
+    this.getUserFormData()
   },
   data () {
     return {
+      loaded: false,
       loading: true,
       page: 1,
       response: [],
@@ -219,24 +214,35 @@ export default {
         },
         {
           text: 'تاریخ',
+          align: 'start',
           value: 'completed_at'
         },
+        {
+          text: '',
+          value: 'actions'
+        }
       ],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        orderProducts: '',
+        user: '',
+        user_mobile: '',
+        insertor: '',
+        insertor_mobile: '',
+        completed_at: ''
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        orderProducts: '',
+        user: '',
+        user_mobile: '',
+        insertor: '',
+        insertor_mobile: '',
+        completed_at: ''
       },
+      genders: [],
+      majors: [],
+      provinces: [],
+      cities: []
     }
   },
   watch: {
@@ -246,8 +252,37 @@ export default {
     dialogDelete (val) {
       val || this.closeDelete()
     },
+    page (val) {
+      this.apiCall(val)
+    }
   },
   methods: {
+    getUserFormData () {
+      this.$axios.get(API_ADDRESS.user.formData)
+        .then((resp) => {
+          this.genders = resp.data.data.genders
+          this.majors = resp.data.data.majors
+          this.provinces = resp.data.data.provinces
+          this.cities = resp.data.data.cities
+        })
+    },
+    apiCall (page = 1) {
+      goTo(0)
+      this.loading = true
+      this.$axios.get(API_ADDRESS.product.base + '?page=' + page, {
+        headers: {
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiMmM1ZWQzOWUwNDUzMzZhOGY3ZjRiNWU2OTU0MDJkMmQzNmRlNmYyYjE3OTNlNzFmZjkyYjkzZjEyYWNhOWQwNTAzOTUyOWM5NDY5ZDYxY2QiLCJpYXQiOjE2NDI4Mzc0MjMuMTQ3OTcsIm5iZiI6MTY0MjgzNzQyMy4xNDc5NzIsImV4cCI6MTY3NDM3MzQyMy4xNDIxMzgsInN1YiI6IjM4OTI3MCIsInNjb3BlcyI6W119.RyajIaYQPEaNpmUHM_Zx7wSAexMp9PTmKa08n7dDe0fAlNyEVKyE9bkJP4WW7NlNEnV5bRLS192Kwj19TXrklcmVYW32BQBnxfFI3pIK3UxWUoA5XzGRlNlFp_gSAkrEkJgDHE45c_9Vp2DNUPwxH9kr4D_GgI_2YI5sdDGoCS81hJa9cU0TUOJFrImtkypmtsH_EAzwLedNngPsn41HuMWc_sOj-5I74_LLT29fNXQstEBuvlXXEKF2TvVQ1kdzD_JIeK6LjQlcYYLcEI3IIM79nXj91FQ3zcusV1I2fTLlP4J-988WTfUJwJSIZijsN1rcW1ZEQ14ezImPXcphPxhNCz1rz_g-f4VuKzqMLHUQrbMv3RM4dvTE9LIhh-X-KvvinYJQnisXQQOdfzB_Z4e3f1d1YWxpiZZfmMjrLkr5-5PBSFRngbMVT11e1h6hbC2iIgoxIoLMucXef4x4vkxI3YuIKWjnuEOXtvpE6MY91f3Vsi2TpRUmD4OBG4wj4N2f_e3jWvzg-dAb1b3Yww586iS1zlSOk_OIgA0F8Fa7NI4nKOEYoaMZS2V_5RhaTf8mDwW0OdeVNRN4OkO3Bp2Mg6oPXq9wbssmR64HBf4R-uU5ZYic7sbepBjXLaDAD2gNrU0WKB5nEv9TzsM7rAdPZDcK_a8NJxeYcDqvb9s'
+        }
+      }).then(resp => {
+        this.response = resp.data
+        this.response.data.forEach((item, index) => {
+          this.response.data[index] = { orderProducts: item.orderproducts, user: item.user.first_name + ' ' + item.user.last_name, user_mobile: item.user.mobile, insertor: item.insertor.first_name + ' ' + item.insertor.last_name, insertor_mobile: item.insertor.mobile, completed_at: item.completed_at }
+        })
+        this.page = resp.data.meta.current_page
+        this.loading = false
+        this.loaded = true
+      })
+    },
     editItem (item) {
       this.editedIndex = this.response.data.indexOf(item)
       this.editedItem = Object.assign({}, item)
