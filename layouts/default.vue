@@ -48,6 +48,12 @@
       >
         <v-icon>mdi-minus</v-icon>
       </v-btn>
+      <v-btn
+        icon
+        @click.stop="logout"
+      >
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
       <v-btn
@@ -118,9 +124,15 @@ export default {
   },
   created() {
     let token = this.$store.getters['Auth/accessToken']
-    console.log('token', token)
     if (token) {
+      console.log('headers.common Authorization in created DefaultLayout')
       this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('Auth/logout')
+      this.$router.push({path: '/login'})
     }
   }
 }
