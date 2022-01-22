@@ -68,6 +68,7 @@
     </v-app-bar>
     <v-main>
       <v-container fluid>
+        <notifications />
         <Nuxt />
       </v-container>
     </v-main>

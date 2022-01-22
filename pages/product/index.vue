@@ -28,78 +28,95 @@
               <v-spacer></v-spacer>
               <v-dialog
                 v-model="dialog"
-                max-width="500px"
+                max-width="700px"
               >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="primary"
-                    dark
-                    class="mb-2"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    جدید
-                  </v-btn>
-                </template>
                 <v-card>
                   <v-card-title>
-                    <span class="text-h5">اطلاعات کاربر</span>
+                    <span>اطلاعات کاربر</span>
                   </v-card-title>
 
                   <v-card-text>
                     <v-container>
-                      <v-row>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.first_name"
-                            label="نام"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.calories"
-                            label="Calories"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.user_mobile"
-                            label="موبایل کاربر"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.carbs"
-                            label="Carbs (g)"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.protein"
-                            label="Protein (g)"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
+                      <v-form ref="form" lazy-validation>
+                        <v-row>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-text-field
+                              v-model="editedItem.user_first_name"
+                              :rules="[editedItem.user_firstName_error]"
+                              label="نام"
+                              outlined
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-text-field
+                              v-model="editedItem.user_last_name"
+                              :rules="[editedItem.user_lastName_error]"
+                              label="نام خانوادگی"
+                              outlined
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-select :rules="[editedItem.user_gender_id_error]" label="جنسیت" :items="genders" item-value="id" item-text="title" v-model="editedItem.user_gender_id" outlined/>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-select :rules="[editedItem.user_major_id_error]" label="رشته" :items="majors" item-value="id" item-text="title" v-model="editedItem.user_major_id" outlined/>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-text-field
+                              v-model="editedItem.user_mobile"
+                              label="موبایل"
+                              :rules="[editedItem.user_mobile_error]"
+                              outlined
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-text-field
+                              v-model="editedItem.user_national_code"
+                              :rules="[editedItem.user_nationalCode_error]"
+                              label="کد ملی"
+                              outlined
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="6"
+                          >
+                            <v-select label="استان" :items="provinces" item-value="id" item-text="title" v-model="editedItem.user_province_id" outlined/>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="6"
+                          >
+                            <v-select :rules="[editedItem.user_shahr_id_error]" label="شهر" :items="cityFromSpecificProvince(editedItem.user_province_id)" item-value="id" item-text="title" v-model="editedItem.user_shahr_id" outlined/>
+                          </v-col>
+                        </v-row>
+                      </v-form>
                     </v-container>
                   </v-card-text>
 
@@ -110,25 +127,25 @@
                       text
                       @click="close"
                     >
-                      Cancel
+                      لغو
                     </v-btn>
                     <v-btn
                       color="blue darken-1"
                       text
                       @click="save"
                     >
-                      Save
+                      ذخیره
                     </v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
               <v-dialog v-model="dialogDelete" max-width="500px">
                 <v-card>
-                  <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+                  <v-card-title>آیا مطمئن هستید که این ستون حذف شود؟</v-card-title>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                    <v-btn color="blue darken-1" text @click="closeDelete">لغو</v-btn>
+                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">تایید</v-btn>
                     <v-spacer></v-spacer>
                   </v-card-actions>
                 </v-card>
@@ -137,6 +154,9 @@
           </template>
           <template v-slot:item.orderProducts="{ item }">
             <p :style="{ margin: '10px 5px' }" v-for="(orderProduct, index) in item.orderProducts" :key="index">{{orderProduct.product.title}}</p>
+          </template>
+          <template v-slot:item.user="{ item }">
+            <p>{{item.user_first_name + ' ' + item.user_last_name}}</p>
           </template>
           <template v-slot:item.actions="{ item }">
             <v-btn icon @click="editItem(item)" color="primary">
@@ -224,20 +244,38 @@ export default {
       ],
       editedIndex: -1,
       editedItem: {
-        orderProducts: '',
-        user: '',
+        user_first_name: '',
+        user_last_name: '',
+        user_gender_id: '',
+        user_major_id: '',
         user_mobile: '',
-        insertor: '',
-        insertor_mobile: '',
-        completed_at: ''
+        user_national_code: '',
+        user_shahr_id: '',
+        user_province_id: '',
+        user_firstName_error: () => true,
+        user_lastName_error: () => true,
+        user_mobile_error: () => true,
+        user_gender_id_error: () => true,
+        user_major_id_error: () => true,
+        user_nationalCode_error: () => true,
+        user_shahr_id_error: () => true,
       },
       defaultItem: {
-        orderProducts: '',
-        user: '',
+        user_first_name: '',
+        user_last_name: '',
+        user_gender_id: '',
+        user_major_id: '',
         user_mobile: '',
-        insertor: '',
-        insertor_mobile: '',
-        completed_at: ''
+        user_national_code: '',
+        user_shahr_id: '',
+        user_province_id: '',
+        user_firstName_error: () => true,
+        user_lastName_error: () => true,
+        user_mobile_error: () => true,
+        user_gender_id_error: () => true,
+        user_major_id_error: () => true,
+        user_nationalCode_error: () => true,
+        user_shahr_id_error: () => true,
       },
       genders: [],
       majors: [],
@@ -254,6 +292,14 @@ export default {
     },
     page (val) {
       this.apiCall(val)
+    }
+  },
+  computed: {
+    cityFromSpecificProvince () {
+      return (provinceId) => {
+        console.log(provinceId)
+        return this.cities.filter(city => city.province.id === provinceId)
+      }
     }
   },
   methods: {
@@ -276,7 +322,30 @@ export default {
       }).then(resp => {
         this.response = resp.data
         this.response.data.forEach((item, index) => {
-          this.response.data[index] = { orderProducts: item.orderproducts, user: item.user.first_name + ' ' + item.user.last_name, user_mobile: item.user.mobile, insertor: item.insertor.first_name + ' ' + item.insertor.last_name, insertor_mobile: item.insertor.mobile, completed_at: item.completed_at }
+          this.response.data[index] =
+            {
+              id: item.id,
+              orderProducts: item.orderproducts,
+              user: item.user.first_name + ' ' + item.user.last_name,
+              user_mobile: item.user.mobile,
+              user_mobile_error: () => true,
+              insertor: item.insertor.first_name + ' ' + item.insertor.last_name,
+              insertor_mobile: item.insertor.mobile,
+              completed_at: item.completed_at,
+              user_first_name: item.user.first_name,
+              user_firstName_error: () => true,
+              user_last_name: item.user.last_name,
+              user_lastName_error: () => true,
+              user_id: item.user.id,
+              user_national_code: item.user.national_code,
+              user_nationalCode_error: () => true,
+              user_major_id: item.user.major.id,
+              user_major_id_error: () => true,
+              user_gender_id: item.user.gender.id,
+              user_gender_id_error: () => true,
+              user_shahr_id: item.user.shahr.id,
+              user_shahr_id_error: () => true,
+            }
         })
         this.page = resp.data.meta.current_page
         this.loading = false
@@ -286,6 +355,9 @@ export default {
     editItem (item) {
       this.editedIndex = this.response.data.indexOf(item)
       this.editedItem = Object.assign({}, item)
+      this.editedItem.first_name = item.user_first_name
+      this.editedItem.last_name = item.user_last_name
+      this.editedItem.user_province_id = this.getProvince(item.user_shahr_id).id
       this.dialog = true
     },
     deleteItem (item) {
@@ -293,9 +365,27 @@ export default {
       this.editedItem = Object.assign({}, item)
       this.dialogDelete = true
     },
+    getProvince(cityId) {
+      return this.cities.find(city => {
+        return city.id === cityId
+      }).province
+    },
     deleteItemConfirm () {
-      this.response.data.splice(this.editedIndex, 1)
-      this.closeDelete()
+      this.$axios.delete(API_ADDRESS.product.delete + this.response.data[this.editedIndex].id)
+      .then(() => {
+        this.response.data.splice(this.editedIndex, 1)
+        this.closeDelete()
+        this.$notify({
+          type: 'success',
+          text: 'با موفقیت حذف شد',
+        })
+      }).catch(error => {
+        this.$notify({
+          type: 'error',
+          title: 'مشکلی رخ داده است',
+          text: error.response.data.message,
+        })
+      })
     },
     close () {
       this.dialog = false
@@ -313,11 +403,40 @@ export default {
     },
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.response.data[this.editedIndex], this.editedItem)
+        this.$axios.post(API_ADDRESS.user.update + this.editedItem.user_id, {
+          firstName: this.editedItem.user_first_name,
+          lastName: this.editedItem.user_last_name,
+          mobile: this.editedItem.user_mobile,
+          nationalCode: this.editedItem.user_national_code,
+          gender_id: this.editedItem.user_gender_id,
+          major_id: this.editedItem.user_major_id,
+          shahr_id: this.editedItem.user_shahr_id,
+          _method: 'put'
+        }).then(() => {
+          this.$notify({
+            type: 'success',
+            text: 'ذخیره با موفقیت انجام شد'
+          })
+          Object.assign(this.response.data[this.editedIndex], this.editedItem)
+          this.response.data[this.editedIndex].user = this.response.data[this.editedIndex].user_first_name + ' ' + this.response.data[this.editedIndex].user_last_name
+          this.close()
+        }).catch(error => {
+          Object.keys(error.response.data.errors).forEach(errKey => {
+            this.response.data[this.editedIndex]['user_' + errKey + '_error'] = () => error.response.data.errors[errKey][0]
+            this.editedItem['user_' + errKey + '_error'] = () => error.response.data.errors[errKey][0]
+          })
+          this.$notify({
+            type: 'error',
+            title: 'مشکلی رخ داده است',
+            text: error.response.data.message
+          })
+          setTimeout(() => {
+            this.$refs.form.validate()
+          }, 500)
+        })
       } else {
         this.response.data.push(this.editedItem)
       }
-      this.close()
     },
   }
 }

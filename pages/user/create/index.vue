@@ -189,9 +189,9 @@ export default {
       }
     },
     isUserInfoComplete(user) {
-      return !!(user.firstName && user.lastName && user.gender_id
-        && user.major_id && user.mobile && user.nationalCode &&
-        user.province && user.shahr_id);
+      return !!(user.firstName  || user.lastName  || user.gender_id
+         || user.major_id  || user.mobile  || user.nationalCode  ||
+        user.province  || user.shahr_id);
     },
     getUserFormData () {
       this.loading = true
@@ -232,12 +232,26 @@ export default {
             }, 500)
           }).catch(err => {
             user.loading = false
+            Object.keys(user).forEach(key => {
+              if (key.includes('_error')) {
+                user[key] = false
+              }
+            })
             Object.keys(err.response.data.errors).forEach(key => {
               user[key + '_error'] = err.response.data.errors[key][0]
             })
             setTimeout(() => {
               this.$refs.form.validate()
             }, 500)
+          })
+        } else if (user.firstName || user.lastName || user.gender_id
+           || user.major_id  || user.mobile  || user.nationalCode  ||
+          user.province  || user.shahr_id) {
+          this.$notify({
+            type: 'error',
+            duration: 10000,
+            title: 'توجه',
+            text: 'پر کردن تمامی فیلدهای یک سطر الزامی ست'
           })
         }
       })
