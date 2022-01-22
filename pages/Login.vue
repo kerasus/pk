@@ -12,6 +12,13 @@
         sm8
         md4
       >
+
+        <v-img
+          :src="require('~/static/boniad-ehsan-logo.png')"
+          class="mx-auto"
+          max-width="100px"
+          width="100px"
+        />
         <v-card class="elevation-12">
           <v-progress-linear
             color="#ffc107"
@@ -23,7 +30,7 @@
             height="6"
           />
           <v-toolbar
-            color="primary"
+            color="success"
             dark
             flat
           >
@@ -133,22 +140,17 @@
           this.$store.commit('Auth/updateAccessToken', access_token)
         },
         redirectTo () {
-          if (this.$route.query.redirect_to_exam) {
-            this.$router.push({
-              name: 'onlineQuiz.StartExamAutomatically',
-              params: {
-                examId: this.$route.query.redirect_to_exam,
-                autoStart: this.$route.query.exam_auto_start
-              }
-            })
-            return
-          }
-
-          let redirect_to = window.localStorage.getItem('redirect_to')
-          if (!redirect_to) {
-            redirect_to = 'dashboard'
-          }
-          this.$router.push({ name: redirect_to })
+          // if (this.$route.query.redirect_to_exam) {
+          //   this.$router.push({path: '/user/create'})
+          //   return
+          // }
+          //
+          // let redirect_to = window.localStorage.getItem('redirect_to')
+          // if (!redirect_to) {
+          //   redirect_to = 'dashboard'
+          // }
+          // this.$router.push({ name: redirect_to })
+          // this.$router.push({path: '/user/create'})
 
         },
         login () {
@@ -165,11 +167,12 @@
               that.user = new User(response.data.data.user)
               that.$store.commit('Auth/updateUser', that.user)
               const access_token = response.data.data.access_token
-              that.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token
-              console.log(access_token)
+              this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token
+              console.log('headers.common Authorization in login')
               this.setAccessToken(access_token)
               that.setUserData(response.data.data.user)
-              this.getUserData(() => { this.redirectTo() })
+              this.$router.push({path: '/user/create'})
+              // this.getUserData(() => { this.redirectTo() })
             })
             .catch( () => {
               this.loadingList = false
