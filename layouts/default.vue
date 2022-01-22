@@ -101,6 +101,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-footer
+      v-if="false"
       :absolute="!fixed"
       app
     >
