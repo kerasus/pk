@@ -79,9 +79,15 @@
             </div>
             <div class="input-box">
               <div class="select">
-                <select class="select-text" :class="{ 'has-error': user.province_error }" required v-model="user.province" @click="user.provinceDropDown = true" @blur="user.provinceDropDown =false" @change="user.provinceDropDown = false">
+                <select class="select-text" :class="{ 'has-error': user.province_error }" required v-model="user.province" @click="provinceSelectOnClick(user)" @mousedown="provinceSelectOnClick(user)" @blur="provinceSelectOnBlur(user)" @change="provinceSelectOnChange(user)">
                   <option value="" disabled selected></option>
-                  <option v-for="(item, index) in provincesComputed(user.provinceDropDown, user.province)" :key="index":value="item.id">{{ item.title }}</option>
+                  <option
+                    v-for="(item, index) in provincesComputed(user.provinceDropDown, user.province)"
+                    :key="index"
+                    :value="item.id"
+                  >
+                    {{ item.title }}
+                  </option>
                 </select>
                 <span class="select-highlight"></span>
                 <span class="select-bar"></span>
@@ -141,6 +147,15 @@ export default {
     }
   },
   methods: {
+    provinceSelectOnClick (user) {
+      user.provinceDropDown = true
+    },
+    provinceSelectOnBlur (user) {
+      user.provinceDropDown = false
+    },
+    provinceSelectOnChange (user) {
+      user.provinceDropDown = false
+    },
     initUserFormArray(clean = true, amount = 20) {
       if (clean) {
         this.userForm = []
