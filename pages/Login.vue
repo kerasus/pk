@@ -12,6 +12,13 @@
         sm8
         md4
       >
+
+        <v-img
+          :src="require('~/static/boniad-ehsan-logo.png')"
+          class="mx-auto"
+          max-width="100px"
+          width="100px"
+        />
         <v-card class="elevation-12">
           <v-progress-linear
             color="#ffc107"
@@ -23,7 +30,7 @@
             height="6"
           />
           <v-toolbar
-            color="primary"
+            color="success"
             dark
             flat
           >
