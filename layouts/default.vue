@@ -58,7 +58,7 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container fluid>
         <Nuxt />
       </v-container>
     </v-main>
@@ -89,6 +89,8 @@
 </template>
 
 <script>
+import '@/static/fonts/IRANSans/css/fontiran.css'
+
 export default {
   name: 'DefaultLayout',
   data () {
@@ -116,9 +118,22 @@ export default {
   },
   created() {
     let token = this.$store.getters['Auth/accessToken']
+    console.log('token', token)
     if (token) {
       this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     }
   }
 }
 </script>
+
+<style>
+.v-application .body-1,
+.v-application .body-2,
+.v-application .subtitle-1,
+.v-application .subtitle-2,
+.v-application .caption,
+.v-application, .v-application .headline {
+  font-family: 'IRANSans', 'Arial', 'Verdana', 'Tahoma', sans-serif !important;
+}
+
+</style>

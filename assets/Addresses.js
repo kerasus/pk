@@ -10,6 +10,7 @@ const API_ADDRESS = {
     login: authServer + '/login'
   },
   user: {
+    create: authServer + '/admin/bonyadEhsan/user',
     base: authServer + '/user',
     mobile: {
       resend: authServer + '/mobile/resend',
