@@ -96,6 +96,16 @@ export default {
     timing: false
   },
 
+  router: {
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: 'custom',
+        path: '*',
+        component: resolve(__dirname, 'pages/404.vue')
+      })
+    }
+  },
+
   env: {
     AUTH_TARGET_API_SERVER: process.env.AUTH_TARGET_API_SERVER || 'https://office.alaatv.com:702/api/v2',
     LUMEN_TARGET_API_SERVER: process.env.LUMEN_TARGET_API_SERVER || 'https://office.alaatv.com:500/api/v1',

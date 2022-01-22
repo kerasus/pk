@@ -79,9 +79,15 @@
             </div>
             <div class="input-box">
               <div class="select">
-                <select class="select-text" :class="{ 'has-error': user.province_error }" required v-model="user.province" @click="user.provinceDropDown = true" @blur="user.provinceDropDown =false" @change="user.provinceDropDown = false">
+                <select class="select-text" :class="{ 'has-error': user.province_error }" required v-model="user.province" @click="provinceSelectOnClick(user)" @mousedown="provinceSelectOnClick(user)" @blur="provinceSelectOnBlur(user)" @change="provinceSelectOnChange(user)">
                   <option value="" disabled selected></option>
-                  <option v-for="(item, index) in provincesComputed(user.provinceDropDown, user.province)" :key="index":value="item.id">{{ item.title }}</option>
+                  <option
+                    v-for="(item, index) in provincesComputed(user.provinceDropDown, user.province)"
+                    :key="index"
+                    :value="item.id"
+                  >
+                    {{ item.title }}
+                  </option>
                 </select>
                 <span class="select-highlight"></span>
                 <span class="select-bar"></span>
@@ -128,7 +134,8 @@
 import API_ADDRESS from "assets/Addresses";
 
 export default {
-  name: "userCreate",
+  name: 'userCreate',
+  middleware: 'auth',
   data () {
     return {
       userForm: [],
@@ -140,6 +147,15 @@ export default {
     }
   },
   methods: {
+    provinceSelectOnClick (user) {
+      user.provinceDropDown = true
+    },
+    provinceSelectOnBlur (user) {
+      user.provinceDropDown = false
+    },
+    provinceSelectOnChange (user) {
+      user.provinceDropDown = false
+    },
     initUserFormArray(clean = true, amount = 20) {
       if (clean) {
         this.userForm = []
@@ -202,10 +218,6 @@ export default {
             gender_id: user.gender_id,
             major_id: user.major_id,
             shahr_id: user.shahr_id
-          }, {
-            headers: {
-              'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiOGI2NDBkZWFkY2RiODQxZmJmOTEwOTQ2MGRlNDI4Y2QwNTI3Mzc0NjkyNTAzMDkzMzQzN2QyM2M3OWY5MTg5MWIzZDU0MmIwNWVmZDlkYTYiLCJpYXQiOjE2NDI2ODUyMDEuNjgwMTM2LCJuYmYiOjE2NDI2ODUyMDEuNjgwMTM4LCJleHAiOjE2NzQyMjEyMDEuNjc2MzI5LCJzdWIiOiIxNjYzMDIiLCJzY29wZXMiOltdfQ.PYHS3asF_ZTgoPkLeYRF8gHoVS1CuTzKchDhiN2jzcifNAMkV7tE-DCSbRD-8QB9aF086ffi3dLSBKoYGLIMEFG7aTEbedgxyqQCC7PSEYRbU1WJhgMgGVWFdMhAc-BL3036BpFkvFLRjo8UInALdFLFTlbpMILngJZS27Im8zNQW4WJunjqw88pT_m6XEXC6gXrZNVQM1usCBNqVg3apzsb3HtXhLwmCOA4oMHQMTj2_wuBBnLkTD-xVERnuDaWTpEvFgsXrzhpWln9a4p5Y_2qerNlvJRJkeQnAuAb4NkT1uyMJzW5u9YzvOhaTvOxaN_gg5-k7kmTVc--wwtCcsFuVcDYam6GZMwCWX1bAunF15N21ez3gvWWZRBGsDHFvtxLdGxKK-Sh5g3BlG-PXNWIgrwVymDDeDz-RT4GKK7-9LJSu2CxAdK1SGell3ZIZqFjd-NGlqdkUls8zgTGq-B6-9Vm1WmXMi12JPS-h1I9z2i8lmxMAahtbyYu_h2pVWfaLMLojIF7cgCuJuj7UQmuMXOCTnZVqZGLLiUBmkCTY2awzbicxg7HploCi_MTO6N2xd90TGpkIR0hco3kELQVzKJ1dMLmWpI1Q7GhRogYn2QVeTdiFeLN6d4sc037mRWTz9lxEy4MpnRgj0RoFUDM0lR_kpepgLD1ExYm94s'
-            }
           }).then(resp => {
             user.hasBeenSaved = true
             user.editable = false
