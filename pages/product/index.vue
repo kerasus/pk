@@ -32,7 +32,7 @@
               >
                 <v-card>
                   <v-card-title>
-                    <span>اطلاعات کاربر</span>
+                    <span>اطلاعات دانش آموز</span>
                   </v-card-title>
 
                   <v-card-text>
@@ -141,7 +141,7 @@
               </v-dialog>
               <v-dialog v-model="dialogDelete" max-width="500px">
                 <v-card>
-                  <v-card-title>آیا مطمئن هستید که این ستون حذف شود؟</v-card-title>
+                  <v-card-title>از حذف این سطر اطمینان دارید؟</v-card-title>
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="closeDelete">لغو</v-btn>
@@ -152,11 +152,14 @@
               </v-dialog>
             </v-toolbar>
           </template>
-          <template v-slot:item.orderProducts="{ item }">
-            <p :style="{ margin: '10px 5px' }" v-for="(orderProduct, index) in item.orderProducts" :key="index">{{orderProduct.product.title}}</p>
-          </template>
           <template v-slot:item.user="{ item }">
             <p>{{item.user_first_name + ' ' + item.user_last_name}}</p>
+          </template>
+          <template v-slot:item.major="{ item }">
+            <p>{{item.major}}</p>
+          </template>
+          <template v-slot:item.city="{ item }">
+            <p>{{item.city}}</p>
           </template>
           <template v-slot:item.actions="{ item }">
             <v-btn icon @click="editItem(item)" color="primary">
@@ -200,6 +203,7 @@ import goTo from 'vuetify/lib/services/goto'
 
 export default {
   name: "productShowEdit.vue",
+  middleware: 'auth',
   created () {
     this.apiCall()
     this.getUserFormData()
@@ -214,16 +218,20 @@ export default {
       dialogDelete: false,
       headers: [
         {
-          text: 'محصول',
-          value: 'orderProducts'
-        },
-        {
-          text: 'کاربر',
+          text: 'دانش آموز',
           value: 'user'
         },
         {
-          text: 'موبایل کاربر',
+          text: 'رشته دانش آموز',
+          value: 'major'
+        },
+        {
+          text: 'موبایل دانش آموز',
           value: 'user_mobile'
+        },
+        {
+          text: 'شهر دانش آموز',
+          value: 'city'
         },
         {
           text: 'تخصیص دهنده',
@@ -323,6 +331,8 @@ export default {
             {
               id: item.id,
               orderProducts: item.orderproducts,
+              major: item.user.major.name,
+              city: item.user.city,
               user: item.user.first_name + ' ' + item.user.last_name,
               user_mobile: item.user.mobile,
               user_mobile_error: () => true,

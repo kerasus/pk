@@ -43,7 +43,7 @@
                   />
                 </v-col>
                 <v-col>
-                  ورود / ثبت نام
+                  ورود
                 </v-col>
               </v-row>
             </v-toolbar-title>

@@ -128,6 +128,11 @@ export default {
           to: '/user/create'
         },
         {
+          icon: 'mdi-account-multiple-plus',
+          title: 'ثبت مشاور',
+          to: '/moshaver/create'
+        },
+        {
           icon: 'mdi-account-details',
           title: 'مشاهده ثبت نام شده ها',
           to: '/product'
@@ -153,6 +158,7 @@ export default {
   },
   methods: {
     logout () {
+      this.rightDrawer = false
       this.$store.dispatch('Auth/logout')
       this.$router.push({path: '/login'})
     }
