@@ -1,7 +1,7 @@
 <template>
   <v-app dark>
     <v-navigation-drawer
-      v-if="!isLoginPage"
+      v-if="!isLoginPage && false"
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
@@ -68,6 +68,7 @@
     </v-app-bar>
     <v-main>
       <v-container fluid>
+        <notifications />
         <Nuxt />
       </v-container>
     </v-main>

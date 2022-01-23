@@ -97,7 +97,7 @@
             </div>
             <div class="input-box">
               <div class="select">
-                <select class="select-text" :class="{ 'has-error': user.shahr_id_error }" required v-model="user.shahr_id" @click="user.shahr_idDropdown = true" @blur="user.shahr_idDropdown = false" @change="user.shahr_idDropdown = false">
+                <select class="select-text" :class="{ 'has-error': user.shahr_id_error }" required v-model="user.shahr_id" @click="shahr_idSelectOnClick(user)" @mousedown="shahr_idSelectOnClick(user)" @blur="shahr_idSelectOnBlur(user)" @change="shahr_idSelectOnChange(user)">
                   <option value="" disabled selected></option>
                   <option value="disable" disabled selected v-if="selectedProvinceCity(user.province).length === 0">ابتدا استان را انتخاب کنید</option>
                   <option v-for="(item, index) in selectedProvinceCity(user.province, user.shahr_idDropdown, user.shahr_id)" :key="index" :value="item.id">{{ item.title }}</option>
@@ -156,6 +156,15 @@ export default {
     provinceSelectOnChange (user) {
       user.provinceDropDown = false
     },
+    shahr_idSelectOnClick (user) {
+      user.shahr_idDropdown = true
+    },
+    shahr_idSelectOnBlur (user) {
+      user.shahr_idDropdown = false
+    },
+    shahr_idSelectOnChange (user) {
+      user.shahr_idDropdown = false
+    },
     initUserFormArray(clean = true, amount = 20) {
       if (clean) {
         this.userForm = []
@@ -189,9 +198,9 @@ export default {
       }
     },
     isUserInfoComplete(user) {
-      return !!(user.firstName && user.lastName && user.gender_id
-        && user.major_id && user.mobile && user.nationalCode &&
-        user.province && user.shahr_id);
+      return !!(user.firstName  || user.lastName  || user.gender_id
+         || user.major_id  || user.mobile  || user.nationalCode  ||
+        user.province  || user.shahr_id);
     },
     getUserFormData () {
       this.loading = true
@@ -232,12 +241,26 @@ export default {
             }, 500)
           }).catch(err => {
             user.loading = false
+            Object.keys(user).forEach(key => {
+              if (key.includes('_error')) {
+                user[key] = false
+              }
+            })
             Object.keys(err.response.data.errors).forEach(key => {
               user[key + '_error'] = err.response.data.errors[key][0]
             })
             setTimeout(() => {
               this.$refs.form.validate()
             }, 500)
+          })
+        } else if (user.firstName || user.lastName || user.gender_id
+           || user.major_id  || user.mobile  || user.nationalCode  ||
+          user.province  || user.shahr_id) {
+          this.$notify({
+            type: 'error',
+            duration: 10000,
+            title: 'توجه',
+            text: 'پر کردن تمامی فیلدهای یک سطر الزامی ست'
           })
         }
       })
